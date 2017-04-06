@@ -1,0 +1,350 @@
+[
+    {
+        "command": "status",
+        "description": "order status retriver",
+        "script": [
+            {
+                "topic": "default",
+                "script": [
+                    {
+                        "text": [
+                            "Thanks for shopping with us!"
+                        ]
+                    },
+                    {
+                        "text": [
+                            "What's the email address associated with your account?"
+                        ],
+                        "collect": {
+                            "key": "user_email",
+                            "options": [
+                                {
+                                    "default": true,
+                                    "pattern": "default",
+                                    "action": "invalid_email"
+                                },
+                                {
+                                    "pattern": "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+                                    "type": "regex",
+                                    "action": "next"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "text": [
+                            "Here are the details from your last order:"
+                        ],
+                        "attachments": [
+                            {
+                                "title": "Order #1084839",
+                                "text": "Oxbow Regal Rat Food, 3-Pound Bag",
+                                "fields": [
+                                    {
+                                        "title": "",
+                                        "value": "Ordered on April 5, 2017"
+                                    }
+                                ],
+                                "actions": [],
+                                "fallback": "",
+                                "title_link": "https://studio.botkit.ai/",
+                                "color": "#666666",
+                                "thumb_url": "http://media.tumblr.com/640747d6a44eba437ddc0769cc004811/tumblr_inline_mlq1s1lTwU1qz4rgp.jpg"
+                            },
+                            {
+                                "title": "Ship To:",
+                                "text": "Eric Soelzer",
+                                "fields": [
+                                    {
+                                        "title": "",
+                                        "value": "2710 Carnarvon Lane"
+                                    },
+                                    {
+                                        "title": "",
+                                        "value": "Austin, TX 78704"
+                                    }
+                                ],
+                                "actions": [
+                                    {
+                                        "text": "Change",
+                                        "name": "button",
+                                        "value": "1",
+                                        "type": "button"
+                                    }
+                                ],
+                                "color": "#008000",
+                                "callback_id": "shippping_address"
+                            },
+                            {
+                                "title": "Payment Method:",
+                                "text": "",
+                                "fields": [
+                                    {
+                                        "title": "",
+                                        "value": "**** **** **** 1723"
+                                    }
+                                ],
+                                "actions": [
+                                    {
+                                        "text": "Change",
+                                        "name": "button",
+                                        "value": "1",
+                                        "type": "button"
+                                    }
+                                ],
+                                "image_url": "https://d3kgr2cjl1zxw7.cloudfront.net/mastercard_logo.png",
+                                "callback_id": "billing",
+                                "color": "#00ff00"
+                            },
+                            {
+                                "title": "Shipping Info:",
+                                "text": "Arriving Saturday, April 8",
+                                "fields": [],
+                                "actions": [
+                                    {
+                                        "text": "Track package",
+                                        "name": "button",
+                                        "value": "1",
+                                        "type": "button"
+                                    },
+                                    {
+                                        "text": "Cancel Items",
+                                        "name": "button",
+                                        "value": "1",
+                                        "type": "button",
+                                        "style": "danger"
+                                    }
+                                ],
+                                "callback_id": "shipping",
+                                "color": "#66ff66"
+                            }
+                        ]
+                    },
+                    {
+                        "text": [
+                            "Did that information satisfy your request?"
+                        ],
+                        "collect": {
+                            "key": "satisfaction",
+                            "options": [
+                                {
+                                    "default": true,
+                                    "pattern": "default",
+                                    "action": "next"
+                                },
+                                {
+                                    "pattern": "yes",
+                                    "type": "utterance",
+                                    "action": "next"
+                                },
+                                {
+                                    "pattern": "no",
+                                    "type": "utterance",
+                                    "action": "neg_help"
+                                }
+                            ]
+                        },
+                        "attachments": []
+                    },
+                    {
+                        "text": [
+                            "Thank you!",
+                            "Thanks for being a customer!"
+                        ]
+                    },
+                    {
+                        "action": "complete"
+                    }
+                ]
+            },
+            {
+                "topic": "on_timeout",
+                "script": [
+                    {
+                        "text": [
+                            "Looks like you got distracted. We can continue later."
+                        ]
+                    },
+                    {
+                        "action": "timeout"
+                    }
+                ]
+            },
+            {
+                "topic": "invalid_email",
+                "script": [
+                    {
+                        "text": [
+                            "I'm sorry but that email address is not in my system."
+                        ]
+                    },
+                    {
+                        "text": [
+                            "Would you like to try again?"
+                        ],
+                        "collect": {
+                            "key": "satisfaction",
+                            "options": [
+                                {
+                                    "default": true,
+                                    "pattern": "default",
+                                    "action": "next"
+                                },
+                                {
+                                    "pattern": "yes",
+                                    "type": "utterance",
+                                    "action": "default"
+                                },
+                                {
+                                    "pattern": "no",
+                                    "type": "utterance",
+                                    "action": "goodbye"
+                                },
+                                {
+                                    "pattern": "quit",
+                                    "type": "utterance",
+                                    "action": "goodbye"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "action": "stop"
+                    }
+                ]
+            },
+            {
+                "topic": "goodbye",
+                "script": [
+                    {
+                        "text": [
+                            "Great!",
+                            "Fantastic.",
+                            "Awesome!",
+                            "Wonderful.",
+                            "Stupendous!"
+                        ]
+                    },
+                    {
+                        "text": [
+                            "See you next time.",
+                            "Check ya later!",
+                            "Just let me know if you need me!",
+                            "I'll see you around."
+                        ]
+                    },
+                    {
+                        "action": "complete"
+                    }
+                ]
+            },
+            {
+                "topic": "finish",
+                "script": [
+                    {
+                        "action": "complete"
+                    }
+                ]
+            },
+            {
+                "topic": "help",
+                "script": [
+                    {
+                        "text": [
+                            "I can be sure you get some help!"
+                        ]
+                    },
+                    {
+                        "action": "complete"
+                    }
+                ]
+            },
+            {
+                "topic": "neg_help",
+                "script": [
+                    {
+                        "text": [
+                            "How can we help?"
+                        ],
+                        "attachments": [
+                            {
+                                "title": "",
+                                "text": "",
+                                "fields": [],
+                                "actions": [
+                                    {
+                                        "text": "Check Status",
+                                        "name": "button",
+                                        "value": "1",
+                                        "type": "button"
+                                    },
+                                    {
+                                        "text": "View Account",
+                                        "name": "button",
+                                        "value": "1",
+                                        "type": "button"
+                                    },
+                                    {
+                                        "text": "Get Support",
+                                        "name": "button",
+                                        "value": "1",
+                                        "type": "button"
+                                    }
+                                ],
+                                "callback_id": "help_options"
+                            }
+                        ]
+                    },
+                    {
+                        "text": [
+                            "Was I able to help you?"
+                        ],
+                        "collect": {
+                            "key": "satisfaction",
+                            "options": [
+                                {
+                                    "default": true,
+                                    "pattern": "default",
+                                    "action": "next"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "action": "stop"
+                    }
+                ]
+            }
+        ],
+        "triggers": [
+            {
+                "type": "string",
+                "pattern": "status"
+            }
+        ],
+        "variables": [
+            {
+                "name": "satisfaction",
+                "type": "string",
+                "id": 31
+            },
+            {
+                "name": "user_email",
+                "type": "string",
+                "id": 451
+            },
+            {
+                "name": "question_1",
+                "type": "string"
+            },
+            {
+                "name": "question_2",
+                "type": "string"
+            },
+            {
+                "name": "question_3",
+                "type": "string"
+            }
+        ]
+    }
+]
