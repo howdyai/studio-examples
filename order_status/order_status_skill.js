@@ -10,7 +10,7 @@ module.exports = function(controller) {
     // using studio.validate, we can tap into the moment when the user has just
     // responded with a valid email address, and do something useful like look up their
     // order in the database.
-    controller.studio.validate('status','user_email', function(convo, next) {
+    controller.studio.validate('order_status','user_email', function(convo, next) {
 
         // get the value of the `user_email` variable that was configured in the Botkit UI
         var value = convo.extractResponse('user_email');
