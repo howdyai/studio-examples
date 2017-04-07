@@ -1,6 +1,6 @@
 [
     {
-        "command": "order_tatus",
+        "command": "order_status",
         "description": "retrieve an order status report",
         "triggers": [
             {
