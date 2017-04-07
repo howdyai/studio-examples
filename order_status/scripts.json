@@ -2,6 +2,32 @@
     {
         "command": "status",
         "description": "order status retriver",
+        "triggers": [
+            {
+                "pattern": "order status",
+                "type": "string",
+                "id": 245
+            },
+            {
+                "type": "string",
+                "pattern": "status"
+            }
+        ],
+        "variables": [
+            {
+                "name": "try_again",
+                "type": "string",
+                "id": 470
+            },
+            {
+                "name": "satisfaction",
+                "type": "string"
+            },
+            {
+                "name": "user_email",
+                "type": "string"
+            }
+        ],
         "script": [
             {
                 "topic": "default",
@@ -32,43 +58,50 @@
                         }
                     },
                     {
+                        "action": "status_report"
+                    }
+                ]
+            },
+            {
+                "topic": "status_report",
+                "script": [
+                    {
                         "text": [
                             "Here are the details from your last order:"
                         ],
                         "attachments": [
                             {
-                                "title": "Order #1084839",
-                                "text": "Oxbow Regal Rat Food, 3-Pound Bag",
+                                "title": "Order #{{vars.order.id}}",
+                                "text": "{{vars.order.item}}",
                                 "fields": [
                                     {
                                         "title": "",
-                                        "value": "Ordered on April 5, 2017"
+                                        "value": "Ordered on {{vars.order.date}}"
                                     }
                                 ],
                                 "actions": [],
                                 "fallback": "",
-                                "title_link": "https://studio.botkit.ai/",
                                 "color": "#666666",
-                                "thumb_url": "http://media.tumblr.com/640747d6a44eba437ddc0769cc004811/tumblr_inline_mlq1s1lTwU1qz4rgp.jpg"
+                                "image_url": "https://placeimg.com/640/480/tech"
                             },
                             {
                                 "title": "Ship To:",
-                                "text": "Eric Soelzer",
+                                "text": "{{vars.order.address.name}}",
                                 "fields": [
                                     {
                                         "title": "",
-                                        "value": "2710 Carnarvon Lane"
+                                        "value": "{{vars.order.address.line1}}"
                                     },
                                     {
                                         "title": "",
-                                        "value": "Austin, TX 78704"
+                                        "value": "{{vars.order.address.line2}}"
                                     }
                                 ],
                                 "actions": [
                                     {
                                         "text": "Change",
-                                        "name": "button",
-                                        "value": "1",
+                                        "name": "change_address",
+                                        "value": "{{vars.order.id}}",
                                         "type": "button"
                                     }
                                 ],
@@ -81,20 +114,20 @@
                                 "fields": [
                                     {
                                         "title": "",
-                                        "value": "**** **** **** 1723"
+                                        "value": "**** **** **** {{vars.order.payment.last4}}"
                                     }
                                 ],
                                 "actions": [
                                     {
                                         "text": "Change",
-                                        "name": "button",
-                                        "value": "1",
+                                        "name": "change_payment",
+                                        "value": "{{vars.order.id}}",
                                         "type": "button"
                                     }
                                 ],
-                                "image_url": "https://d3kgr2cjl1zxw7.cloudfront.net/mastercard_logo.png",
                                 "callback_id": "billing",
-                                "color": "#00ff00"
+                                "color": "#00ff00",
+                                "thumb_url": "https://d3kgr2cjl1zxw7.cloudfront.net/mastercard_logo.png"
                             },
                             {
                                 "title": "Shipping Info:",
@@ -103,14 +136,14 @@
                                 "actions": [
                                     {
                                         "text": "Track package",
-                                        "name": "button",
-                                        "value": "1",
+                                        "name": "track",
+                                        "value": "{{vars.order.id}}",
                                         "type": "button"
                                     },
                                     {
                                         "text": "Cancel Items",
-                                        "name": "button",
-                                        "value": "1",
+                                        "name": "cancel",
+                                        "value": "{{vars.order.id}}",
                                         "type": "button",
                                         "style": "danger"
                                     }
@@ -119,32 +152,6 @@
                                 "color": "#66ff66"
                             }
                         ]
-                    },
-                    {
-                        "text": [
-                            "Did that information satisfy your request?"
-                        ],
-                        "collect": {
-                            "key": "satisfaction",
-                            "options": [
-                                {
-                                    "default": true,
-                                    "pattern": "default",
-                                    "action": "next"
-                                },
-                                {
-                                    "pattern": "yes",
-                                    "type": "utterance",
-                                    "action": "next"
-                                },
-                                {
-                                    "pattern": "no",
-                                    "type": "utterance",
-                                    "action": "neg_help"
-                                }
-                            ]
-                        },
-                        "attachments": []
                     },
                     {
                         "text": [
@@ -175,15 +182,28 @@
                 "script": [
                     {
                         "text": [
-                            "I'm sorry but that email address is not in my system."
+                            "Sorry, that didn't seem like an email address. Please use the format `me@company.com`."
+                        ]
+                    },
+                    {
+                        "action": "default"
+                    }
+                ]
+            },
+            {
+                "topic": "does_not_exist",
+                "script": [
+                    {
+                        "text": [
+                            "Sorry, no order can be found associated with that email address."
                         ]
                     },
                     {
                         "text": [
-                            "Would you like to try again?"
+                            "Do you want to try again?"
                         ],
                         "collect": {
-                            "key": "satisfaction",
+                            "key": "try_again",
                             "options": [
                                 {
                                     "default": true,
@@ -194,156 +214,19 @@
                                     "pattern": "yes",
                                     "type": "utterance",
                                     "action": "default"
-                                },
-                                {
-                                    "pattern": "no",
-                                    "type": "utterance",
-                                    "action": "goodbye"
-                                },
-                                {
-                                    "pattern": "quit",
-                                    "type": "utterance",
-                                    "action": "goodbye"
                                 }
                             ]
                         }
                     },
                     {
-                        "action": "stop"
-                    }
-                ]
-            },
-            {
-                "topic": "goodbye",
-                "script": [
-                    {
                         "text": [
-                            "Great!",
-                            "Fantastic.",
-                            "Awesome!",
-                            "Wonderful.",
-                            "Stupendous!"
+                            "Ok! Any time you want to check another order, just say `order status`"
                         ]
-                    },
-                    {
-                        "text": [
-                            "See you next time.",
-                            "Check ya later!",
-                            "Just let me know if you need me!",
-                            "I'll see you around."
-                        ]
-                    },
-                    {
-                        "action": "complete"
-                    }
-                ]
-            },
-            {
-                "topic": "finish",
-                "script": [
-                    {
-                        "action": "complete"
-                    }
-                ]
-            },
-            {
-                "topic": "help",
-                "script": [
-                    {
-                        "text": [
-                            "I can be sure you get some help!"
-                        ]
-                    },
-                    {
-                        "action": "complete"
-                    }
-                ]
-            },
-            {
-                "topic": "neg_help",
-                "script": [
-                    {
-                        "text": [
-                            "How can we help?"
-                        ],
-                        "attachments": [
-                            {
-                                "title": "",
-                                "text": "",
-                                "fields": [],
-                                "actions": [
-                                    {
-                                        "text": "Check Status",
-                                        "name": "button",
-                                        "value": "1",
-                                        "type": "button"
-                                    },
-                                    {
-                                        "text": "View Account",
-                                        "name": "button",
-                                        "value": "1",
-                                        "type": "button"
-                                    },
-                                    {
-                                        "text": "Get Support",
-                                        "name": "button",
-                                        "value": "1",
-                                        "type": "button"
-                                    }
-                                ],
-                                "callback_id": "help_options"
-                            }
-                        ]
-                    },
-                    {
-                        "text": [
-                            "Was I able to help you?"
-                        ],
-                        "collect": {
-                            "key": "satisfaction",
-                            "options": [
-                                {
-                                    "default": true,
-                                    "pattern": "default",
-                                    "action": "next"
-                                }
-                            ]
-                        }
                     },
                     {
                         "action": "stop"
                     }
                 ]
-            }
-        ],
-        "triggers": [
-            {
-                "type": "string",
-                "pattern": "status"
-            }
-        ],
-        "variables": [
-            {
-                "name": "satisfaction",
-                "type": "string",
-                "id": 31
-            },
-            {
-                "name": "user_email",
-                "type": "string",
-                "id": 451
-            },
-            {
-                "name": "question_1",
-                "type": "string"
-            },
-            {
-                "name": "question_2",
-                "type": "string"
-            },
-            {
-                "name": "question_3",
-                "type": "string"
             }
         ]
     }
