@@ -1,12 +1,11 @@
 [
     {
-        "command": "status",
-        "description": "order status retriver",
+        "command": "order_tatus",
+        "description": "retrieve an order status report",
         "triggers": [
             {
                 "pattern": "order status",
-                "type": "string",
-                "id": 245
+                "type": "string"
             },
             {
                 "type": "string",
@@ -16,8 +15,7 @@
         "variables": [
             {
                 "name": "try_again",
-                "type": "string",
-                "id": 470
+                "type": "string"
             },
             {
                 "name": "satisfaction",
