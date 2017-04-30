@@ -96,7 +96,41 @@
                                 }
                             ],
                             "multiple": false
-                        }
+                        },
+                        "attachments": [
+                            {
+                                "title": "",
+                                "text": "",
+                                "fields": [],
+                                "actions": [
+                                    {
+                                        "text": "Small",
+                                        "name": "say",
+                                        "value": "small",
+                                        "type": "button"
+                                    },
+                                    {
+                                        "text": "Medium",
+                                        "name": "say",
+                                        "value": "medium",
+                                        "type": "button"
+                                    },
+                                    {
+                                        "text": "Large",
+                                        "name": "say",
+                                        "value": "large",
+                                        "type": "button"
+                                    },
+                                    {
+                                        "text": "XL",
+                                        "name": "say",
+                                        "value": "extra large",
+                                        "type": "button"
+                                    }
+                                ],
+                                "callback_id": "abcd"
+                            }
+                        ]
                     },
                     {
                         "text": [
